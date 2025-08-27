@@ -371,7 +371,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildPromotionalBanner() {
     return SizedBox(
-      height: 120,
+      height: 200, // Increased height to accommodate actual banner size
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -383,7 +383,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 32, // Full width minus padding
-              height: 120,
+              height: 180, // Increased height for actual banner size
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
@@ -400,12 +400,12 @@ class _HomePageState extends State<HomePage> {
                 child: Image.asset(
                   'assets/images/banner1.jpg',
                   width: double.infinity,
-                  height: 120,
-                  fit: BoxFit.cover,
+                  height: 180,
+                  fit: BoxFit.contain, // Changed to contain to show full image
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       width: double.infinity,
-                      height: 120,
+                      height: 180,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
@@ -435,7 +435,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 32, // Full width minus padding
-              height: 120,
+              height: 180, // Increased height for actual banner size
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -451,12 +451,12 @@ class _HomePageState extends State<HomePage> {
                 child: Image.asset(
                   'assets/images/banner2.jpg',
                   width: double.infinity,
-                  height: 120,
-                  fit: BoxFit.cover,
+                  height: 180,
+                  fit: BoxFit.contain, // Changed to contain to show full image
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       width: double.infinity,
-                      height: 120,
+                      height: 180,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Color(0xFF0D65AA), Color(0xFF1E88E5)],
