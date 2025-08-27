@@ -319,29 +319,18 @@ class _HomePageState extends State<HomePage> {
             Positioned(
               left: 20,
               top: 0,
-              child: Container(
+              child: Image.asset(
+                'assets/images/dlh.png',
                 width: 50,
                 height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(25),
-                  child: Image.asset(
-                    'assets/images/dlh.png',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.eco,
-                        color: Color(0xFF0D65AA),
-                        size: 30,
-                      );
-                    },
-                  ),
-                ),
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.eco,
+                    color: Color(0xFF0D65AA),
+                    size: 30,
+                  );
+                },
               ),
             ),
             
