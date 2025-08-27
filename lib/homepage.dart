@@ -6,6 +6,22 @@ import 'map_page.dart';
 import 'booking_page.dart';
 import 'scan_page.dart';
 
+class NewsArticle {
+  final String title;
+  final String date;
+  final String imagePath;
+  final String url;
+  final String description;
+
+  NewsArticle({
+    required this.title,
+    required this.date,
+    required this.imagePath,
+    required this.url,
+    required this.description,
+  });
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,6 +32,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 1; // Home is selected by default
   final TextEditingController _vehicleNumberController = TextEditingController();
+
+  // News articles from DLH Jakarta website
+  final List<NewsArticle> _newsArticles = [
+    NewsArticle(
+      title: 'Tegakkan Hukum Uji Emisi, Polda Metro Ambil Tindakan Edukatif - Represif',
+      date: '09 Maret 2025',
+      imagePath: 'assets/images/news1.jpg',
+      url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/tegakkan-hukum-uji-emisi-polda-metro-ambil-tindakan-edukatif-represif',
+      description: 'Polda Metro Jaya bersama Dinas Lingkungan Hidup DKI Jakarta mengadakan uji emisi gratis di area Komplek Gelora Bung Karno dalam rangka Operasi Zebra Jaya 2023.',
+    ),
+    NewsArticle(
+      title: 'DLH DKI Larang Kendaraan Pegawai yang Belum Uji Emisi Masuki Area Kantor',
+      date: '21 Agustus 2023',
+      imagePath: 'assets/images/news2.jpg',
+      url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/dlh-dki-larang-kendaraan-pegawai-yang-belum-uji-emisi-masuki-area-kantor',
+      description: 'Dinas Lingkungan Hidup DKI Jakarta memberlakukan kebijakan baru untuk meningkatkan kepatuhan uji emisi di kalangan pegawai.',
+    ),
+    NewsArticle(
+      title: 'DKI Jakarta Gelar Uji Emisi Akbar Gratis untuk Perbaikan Kualitas Udara',
+      date: '15 Januari 2024',
+      imagePath: 'assets/images/news3.jpg',
+      url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/dki-jakarta-gelar-uji-emisi-akbar-gratis-untuk-perbaikan-kualitas-udara',
+      description: 'Pemerintah Provinsi DKI Jakarta menyelenggarakan program uji emisi massal gratis sebagai upaya perbaikan kualitas udara Jakarta.',
+    ),
+  ];
 
   @override
   void initState() {
@@ -250,8 +291,12 @@ class _HomePageState extends State<HomePage> {
                     _buildMainActionCard(),
                     const SizedBox(height: 20),
                     
-                                         // Feature Cards
-                     _buildFeatureCards(),
+                    // Feature Cards
+                    _buildFeatureCards(),
+                    const SizedBox(height: 30),
+                    
+                    // Artikel & Berita Section
+                    _buildNewsSection(),
                   ],
                 ),
               ),
@@ -300,24 +345,24 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             
-                         // Jakarta Logo at top right corner (without border radius)
-             Positioned(
-               right: 15,
-               top: 0,
-               child: Image.asset(
-                 'assets/images/jakarta.png',
-                 width: 100,
-                 height: 50,
-                 fit: BoxFit.contain,
-                 errorBuilder: (context, error, stackTrace) {
-                   return const Icon(
-                     Icons.location_city,
-                     color: Color(0xFF0D65AA),
-                     size: 150,
-                   );
-                 },
-               ),
-             ),
+            // Jakarta Logo at top right corner (without border radius)
+            Positioned(
+              right: 15,
+              top: 0,
+              child: Image.asset(
+                'assets/images/jakarta.png',
+                width: 100,
+                height: 50,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.location_city,
+                    color: Color(0xFF0D65AA),
+                    size: 150,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -473,30 +518,30 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 20),
           
-                     // Input Field
-           Container(
-             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-             decoration: BoxDecoration(
-               color: Colors.white,
-               borderRadius: BorderRadius.circular(12),
-               border: Border.all(color: Colors.grey.shade300),
-             ),
-             child: TextField(
-               controller: _vehicleNumberController,
-               decoration: const InputDecoration(
-                 hintText: 'B1234TES',
-                 border: InputBorder.none,
-                 hintStyle: TextStyle(color: Colors.grey),
-               ),
-             ),
-           ),
+          // Input Field
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: TextField(
+              controller: _vehicleNumberController,
+              decoration: const InputDecoration(
+                hintText: 'B1234TES',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
           
-                     // Search Button
-           SizedBox(
-             width: double.infinity,
-             child: ElevatedButton(
-               onPressed: _showEmissionResult,
+          // Search Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _showEmissionResult,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0D65AA),
                 foregroundColor: Colors.white,
@@ -532,7 +577,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: _buildFeatureCard(
               imagePath: 'assets/images/location.png',
-              title: 'Tempat Uji Emisi',
+              title: 'Tempat\nUji Emisi',
               color: const Color(0xFF0D65AA),
             ),
           ),
@@ -548,7 +593,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: _buildFeatureCard(
               imagePath: 'assets/images/emisi.png',
-              title: 'Pemesanan Uji Emisi',
+              title: 'Pemesanan\nUji Emisi',
               color: const Color(0xFF27AE60),
             ),
           ),
@@ -564,7 +609,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: _buildFeatureCard(
               imagePath: 'assets/images/qr.png',
-              title: 'Scan Hasil Uji Emisi',
+              title: 'Scan Booking\nUji Emisi',
               color: const Color(0xFF0D65AA),
             ),
           ),
@@ -600,22 +645,22 @@ class _HomePageState extends State<HomePage> {
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(25),
             ),
-                         child: ClipRRect(
-               borderRadius: BorderRadius.circular(25),
-               child: Image.asset(
-                 imagePath,
-                 width: 50,
-                 height: 50,
-                 fit: BoxFit.contain,
-                 errorBuilder: (context, error, stackTrace) {
-                   return Icon(
-                     Icons.error_outline,
-                     color: color,
-                     size: 24,
-                   );
-                 },
-               ),
-             ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Image.asset(
+                imagePath,
+                width: 50,
+                height: 50,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.error_outline,
+                    color: color,
+                    size: 24,
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -632,7 +677,163 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildNewsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        const Text(
+          'ARTIKEL & BERITA',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0D65AA),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // News Cards
+        ..._newsArticles.map((article) => _buildNewsCard(article)).toList(),
+      ],
+    );
+  }
 
+  Widget _buildNewsCard(NewsArticle article) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () => _launchURL(article.url),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // News Image
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+              child: Container(
+                height: 160,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0D65AA), Color(0xFF1E88E5)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    // Background pattern
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: NewsBackgroundPainter(),
+                      ),
+                    ),
+                    // Content overlay
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              article.date,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0D65AA),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // News Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    article.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1.3,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    article.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D65AA).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          'Baca Selengkapnya',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0D65AA),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xFF0D65AA),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildBottomNavigationBar() {
     return Container(
@@ -698,4 +899,37 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+// Custom painter for news background pattern
+class NewsBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.1)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    // Draw some decorative elements
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.2),
+      20,
+      paint,
+    );
+    
+    canvas.drawCircle(
+      Offset(size.width * 0.2, size.height * 0.7),
+      15,
+      paint,
+    );
+    
+    canvas.drawLine(
+      Offset(0, size.height * 0.5),
+      Offset(size.width * 0.3, size.height * 0.5),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

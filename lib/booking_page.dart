@@ -84,113 +84,121 @@ class _BookingPageState extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F4FD),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 24),
-
-              const Text('Tanggal Kunjungan', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller: _dateController,
-                hint: 'Pilih Tanggal',
-                readOnly: true,
-                prefixIcon: Icons.calendar_today,
-                suffix: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _dateController.clear();
-                    setState(() {});
-                  },
-                ),
-                onTap: _pickDate,
-              ),
-              const SizedBox(height: 16),
-
-              const Text('Bahan Bakar', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              _buildDropdown<String>(
-                value: _fuel,
-                hint: 'Pilih Bahan Bakar',
-                items: _fuelOptions,
-                onChanged: (val) => setState(() => _fuel = val),
-              ),
-              const SizedBox(height: 16),
-
-              const Text('Wilayah', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              _buildDropdown<String>(
-                value: _region,
-                hint: 'Pilih Wilayah',
-                items: _regionOptions,
-                onChanged: (val) => setState(() => _region = val),
-              ),
-              const SizedBox(height: 16),
-
-              const Text('Tempat Uji Emisi', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              _buildDropdown<String>(
-                value: _place,
-                hint: 'Pilih Tempat',
-                items: const ['Tempat A', 'Tempat B', 'Tempat C'],
-                onChanged: (val) => setState(() => _place = val),
-              ),
-              const SizedBox(height: 16),
-
-              const Text('Nama Pendaftar', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              _buildTextField(controller: _nameController, hint: 'Masukkan nama'),
-
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Nomor Telp Pendaftar', style: TextStyle(fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 8),
-                        _buildTextField(controller: _phoneController, hint: '08xxxxxxxxxx', keyboardType: TextInputType.phone),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Nomor Kendaraan', style: TextStyle(fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 8),
-                        _buildTextField(controller: _plateController, hint: 'B1234XXX'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 32),
-              Center(
-                child: SizedBox(
-                  width: 220,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0D65AA),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text('Submit Pendaftaran', style: TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFE8F4FD),
+              Color(0xFFD1E9FB),
             ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 24),
+
+                // Nomor Kendaraan (Vehicle Number)
+                const Text('Nomor Kendaraan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildTextField(controller: _plateController, hint: 'Masukkan nomor kendaraan'),
+                const SizedBox(height: 16),
+
+                // Nomor Telp Pendaftar (Registrant Phone Number)
+                const Text('Nomor Telp Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildTextField(controller: _phoneController, hint: 'Masukkan nomor telepon', keyboardType: TextInputType.phone),
+                const SizedBox(height: 16),
+
+                // Nama Pendaftar (Registrant Name)
+                const Text('Nama Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildTextField(controller: _nameController, hint: 'Masukkan nama pendaftar'),
+                const SizedBox(height: 16),
+
+                // Bahan Bakar (Fuel Type)
+                const Text('Bahan Bakar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildDropdown<String>(
+                  value: _fuel,
+                  hint: 'Pilih Bahan Bakar',
+                  items: _fuelOptions,
+                  onChanged: (val) => setState(() => _fuel = val),
+                ),
+                const SizedBox(height: 16),
+
+                // Tanggal Kunjungan (Visit Date)
+                const Text('Tanggal Kunjungan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildTextField(
+                  controller: _dateController,
+                  hint: 'Pilih Tanggal',
+                  readOnly: true,
+                  prefixIcon: Icons.calendar_today,
+                  suffix: IconButton(
+                    icon: const Icon(Icons.clear, size: 20),
+                    onPressed: () {
+                      _dateController.clear();
+                      setState(() {});
+                    },
+                  ),
+                  onTap: _pickDate,
+                ),
+                const SizedBox(height: 16),
+
+                // Wilayah (Region)
+                const Text('Wilayah', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildDropdown<String>(
+                  value: _region,
+                  hint: 'Pilih Wilayah',
+                  items: _regionOptions,
+                  onChanged: (val) => setState(() => _region = val),
+                ),
+                const SizedBox(height: 16),
+
+                // Tempat Uji Emisi (Emission Test Location)
+                const Text('Tempat Uji Emisi', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                _buildDropdown<String>(
+                  value: _place,
+                  hint: 'Pilih Tempat',
+                  items: const ['Tempat A', 'Tempat B', 'Tempat C'],
+                  onChanged: (val) => setState(() => _place = val),
+                ),
+
+                const SizedBox(height: 32),
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D65AA),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Submit Pendaftaran', 
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
@@ -199,15 +207,32 @@ class _BookingPageState extends State<BookingPage> {
 
   Widget _buildHeader() {
     return Row(
-      children: const [
-        BackButton(color: Colors.black),
-        SizedBox(width: 8),
-        Expanded(
+      children: [
+        IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+        ),
+        const SizedBox(width: 8),
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pemesanan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-              Text('Uji Emisi', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black)),
+              Text(
+                'Pemesanan', 
+                style: TextStyle(
+                  fontSize: 20, 
+                  fontWeight: FontWeight.bold, 
+                  color: Colors.black
+                )
+              ),
+              Text(
+                'Uji Emisi', 
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.w600, 
+                  color: Colors.black
+                )
+              ),
             ],
           ),
         ),
@@ -242,10 +267,11 @@ class _BookingPageState extends State<BookingPage> {
         onTap: onTap,
         keyboardType: keyboardType,
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: InputBorder.none,
           hintText: hint,
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+          hintStyle: TextStyle(color: Colors.grey[600]),
+          prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: Colors.grey[600]) : null,
           suffixIcon: suffix,
         ),
       ),
@@ -270,12 +296,12 @@ class _BookingPageState extends State<BookingPage> {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
           value: value,
           isExpanded: true,
-          hint: Text(hint),
+          hint: Text(hint, style: TextStyle(color: Colors.grey[600])),
           items: items
               .map((e) => DropdownMenuItem<T>(
                     value: e,
@@ -283,6 +309,7 @@ class _BookingPageState extends State<BookingPage> {
                   ))
               .toList(),
           onChanged: onChanged,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
         ),
       ),
     );
