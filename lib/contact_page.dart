@@ -11,6 +11,27 @@ class ContactPage extends StatefulWidget {
 
 class _ContactPageState extends State<ContactPage> {
   int _selectedIndex = 2; // Contact is selected
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
 
   Future<void> _launchEmail() async {
     final Uri emailUri = Uri(
@@ -47,12 +68,13 @@ class _ContactPageState extends State<ContactPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // App Header
+            // App Header with translucent effect
             _buildAppHeader(),
             
             // Main Content
             Expanded(
-              child: Padding(
+              child: SingleChildScrollView(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
@@ -114,6 +136,77 @@ class _ContactPageState extends State<ContactPage> {
                         ],
                       ),
                     ),
+                    
+                    // Add some extra content to enable scrolling
+                    const SizedBox(height: 40),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Jam Operasional',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoRow('Senin - Jumat', '08:00 - 16:00'),
+                          _buildInfoRow('Sabtu', '08:00 - 12:00'),
+                          _buildInfoRow('Minggu & Hari Libur', 'Tutup'),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 40),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Layanan Uji Emisi',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoRow('Kendaraan Roda 2', 'Motor & Skuter'),
+                          _buildInfoRow('Kendaraan Roda 4', 'Mobil & SUV'),
+                          _buildInfoRow('Kendaraan Komersial', 'Truk & Bus'),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 100), // Extra space for scrolling
                   ],
                 ),
               ),
@@ -126,35 +219,92 @@ class _ContactPageState extends State<ContactPage> {
   }
 
   Widget _buildAppHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
+    // Calculate opacity based on scroll offset
+    double opacity = 1.0;
+    if (_scrollOffset > 50) {
+      opacity = 0.8;
+    }
+    if (_scrollOffset > 100) {
+      opacity = 0.6;
+    }
+    if (_scrollOffset > 150) {
+      opacity = 0.4;
+    }
+    if (_scrollOffset > 200) {
+      opacity = 0.2;
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F4FD).withValues(alpha: opacity),
+        boxShadow: _scrollOffset > 10 ? [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1 * opacity),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Call Center',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+        ] : null,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back, 
+                color: Colors.black.withValues(alpha: opacity),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Call Center',
+                    style: TextStyle(
+                      color: Colors.black.withValues(alpha: opacity),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  'Uji Emisi',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    'Uji Emisi',
+                    style: TextStyle(
+                      color: Colors.black.withValues(alpha: opacity),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
             ),
           ),
         ],

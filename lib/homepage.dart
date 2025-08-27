@@ -38,21 +38,21 @@ class _HomePageState extends State<HomePage> {
     NewsArticle(
       title: 'Tegakkan Hukum Uji Emisi, Polda Metro Ambil Tindakan Edukatif - Represif',
       date: '09 Maret 2025',
-      imagePath: 'assets/images/news1.jpg',
+      imagePath: 'assets/images/news1.jpg', // Using existing news image
       url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/tegakkan-hukum-uji-emisi-polda-metro-ambil-tindakan-edukatif-represif',
       description: 'Polda Metro Jaya bersama Dinas Lingkungan Hidup DKI Jakarta mengadakan uji emisi gratis di area Komplek Gelora Bung Karno dalam rangka Operasi Zebra Jaya 2023.',
     ),
     NewsArticle(
       title: 'DLH DKI Larang Kendaraan Pegawai yang Belum Uji Emisi Masuki Area Kantor',
       date: '21 Agustus 2023',
-      imagePath: 'assets/images/news2.jpg',
+      imagePath: 'assets/images/news2.jpg', // Using existing news image
       url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/dlh-dki-larang-kendaraan-pegawai-yang-belum-uji-emisi-masuki-area-kantor',
       description: 'Dinas Lingkungan Hidup DKI Jakarta memberlakukan kebijakan baru untuk meningkatkan kepatuhan uji emisi di kalangan pegawai.',
     ),
     NewsArticle(
       title: 'DKI Jakarta Gelar Uji Emisi Akbar Gratis untuk Perbaikan Kualitas Udara',
       date: '15 Januari 2024',
-      imagePath: 'assets/images/news3.jpg',
+      imagePath: 'assets/images/news3.jpg', // Using existing image
       url: 'https://lingkunganhidup.jakarta.go.id/detail-artikel/dki-jakarta-gelar-uji-emisi-akbar-gratis-untuk-perbaikan-kualitas-udara',
       description: 'Pemerintah Provinsi DKI Jakarta menyelenggarakan program uji emisi massal gratis sebagai upaya perbaikan kualitas udara Jakarta.',
     ),
@@ -726,19 +726,43 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 height: 160,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0D65AA), Color(0xFF1E88E5)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
                 child: Stack(
                   children: [
-                    // Background pattern
+                    // Actual image with fallback
                     Positioned.fill(
-                      child: CustomPaint(
-                        painter: NewsBackgroundPainter(),
+                      child: Image.asset(
+                        article.imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Fallback to gradient background if image fails to load
+                          return Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF0D65AA), Color(0xFF1E88E5)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Stack(
+                              children: [
+                                // Background pattern
+                                Positioned.fill(
+                                  child: CustomPaint(
+                                    painter: NewsBackgroundPainter(),
+                                  ),
+                                ),
+                                // Fallback icon
+                                const Center(
+                                  child: Icon(
+                                    Icons.article,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                     // Content overlay
