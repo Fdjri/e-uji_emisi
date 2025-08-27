@@ -32,6 +32,14 @@ class _ContactPageState extends State<ContactPage> {
     }
   }
 
+  Future<void> _launchWebsite() async {
+    const String websiteUrl = 'https://ujiemisi.jakarta.go.id/';
+    final Uri websiteUri = Uri.parse(websiteUrl);
+    if (!await launchUrl(websiteUri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch website');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +100,16 @@ class _ContactPageState extends State<ContactPage> {
                             title: 'ALAMAT',
                             subtitle: 'Jl. Mandala V No. 67 Jakarta Timur',
                             onTap: null,
+                          ),
+                          const Divider(height: 1, color: Colors.grey),
+                          
+                          // Website Section
+                          _buildContactSection(
+                            icon: Icons.language,
+                            iconColor: Colors.green,
+                            title: 'WEBSITE',
+                            subtitle: 'ujiemisi.jakarta.go.id',
+                            onTap: _launchWebsite,
                           ),
                         ],
                       ),
