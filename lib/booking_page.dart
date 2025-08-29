@@ -48,25 +48,67 @@ class _BookingPageState extends State<BookingPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.check_circle, color: Colors.green, size: 56),
-              SizedBox(height: 12),
-              Text(
-                'Data Berhasil Disimpan',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D65AA).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle_outline,
+                    color: Color(0xFF0D65AA),
+                    size: 50,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Pendaftaran Berhasil',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Data Anda telah berhasil disimpan. Silahkan periksa ke halaman scan page untuk detail pemesanan Anda.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0D65AA),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -84,159 +126,158 @@ class _BookingPageState extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE8F4FD),
-              Color(0xFFD1E9FB),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 24),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
 
-                // Nomor Kendaraan (Vehicle Number)
-                const Text('Nomor Kendaraan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildTextField(controller: _plateController, hint: 'Masukkan nomor kendaraan'),
-                const SizedBox(height: 16),
+                    // Nomor Kendaraan (Vehicle Number)
+                    const Text('Nomor Kendaraan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildTextField(controller: _plateController, hint: 'Masukkan nomor kendaraan'),
+                    const SizedBox(height: 16),
 
-                // Nomor Telp Pendaftar (Registrant Phone Number)
-                const Text('Nomor Telp Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildTextField(controller: _phoneController, hint: 'Masukkan nomor telepon', keyboardType: TextInputType.phone),
-                const SizedBox(height: 16),
+                    // Nomor Telp Pendaftar (Registrant Phone Number)
+                    const Text('Nomor Telp Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildTextField(controller: _phoneController, hint: 'Masukkan nomor telepon', keyboardType: TextInputType.phone),
+                    const SizedBox(height: 16),
 
-                // Nama Pendaftar (Registrant Name)
-                const Text('Nama Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildTextField(controller: _nameController, hint: 'Masukkan nama pendaftar'),
-                const SizedBox(height: 16),
+                    // Nama Pendaftar (Registrant Name)
+                    const Text('Nama Pendaftar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildTextField(controller: _nameController, hint: 'Masukkan nama pendaftar'),
+                    const SizedBox(height: 16),
 
-                // Bahan Bakar (Fuel Type)
-                const Text('Bahan Bakar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildDropdown<String>(
-                  value: _fuel,
-                  hint: 'Pilih Bahan Bakar',
-                  items: _fuelOptions,
-                  onChanged: (val) => setState(() => _fuel = val),
-                ),
-                const SizedBox(height: 16),
+                    // Bahan Bakar (Fuel Type)
+                    const Text('Bahan Bakar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildDropdown<String>(
+                      value: _fuel,
+                      hint: 'Pilih Bahan Bakar',
+                      items: _fuelOptions,
+                      onChanged: (val) => setState(() => _fuel = val),
+                    ),
+                    const SizedBox(height: 16),
 
-                // Tanggal Kunjungan (Visit Date)
-                const Text('Tanggal Kunjungan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: _dateController,
-                  hint: 'Pilih Tanggal',
-                  readOnly: true,
-                  prefixIcon: Icons.calendar_today,
-                  suffix: IconButton(
-                    icon: const Icon(Icons.clear, size: 20),
-                    onPressed: () {
-                      _dateController.clear();
-                      setState(() {});
-                    },
-                  ),
-                  onTap: _pickDate,
-                ),
-                const SizedBox(height: 16),
-
-                // Wilayah (Region)
-                const Text('Wilayah', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildDropdown<String>(
-                  value: _region,
-                  hint: 'Pilih Wilayah',
-                  items: _regionOptions,
-                  onChanged: (val) => setState(() => _region = val),
-                ),
-                const SizedBox(height: 16),
-
-                // Tempat Uji Emisi (Emission Test Location)
-                const Text('Tempat Uji Emisi', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                _buildDropdown<String>(
-                  value: _place,
-                  hint: 'Pilih Tempat',
-                  items: const ['Tempat A', 'Tempat B', 'Tempat C'],
-                  onChanged: (val) => setState(() => _place = val),
-                ),
-
-                const SizedBox(height: 32),
-                Center(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0D65AA),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
+                    // Tanggal Kunjungan (Visit Date)
+                    const Text('Tanggal Kunjungan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                      controller: _dateController,
+                      hint: 'Pilih Tanggal',
+                      readOnly: true,
+                      prefixIcon: Icons.calendar_today,
+                      suffix: IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _dateController.clear();
+                          setState(() {});
+                        },
                       ),
-                      child: const Text(
-                        'Submit Pendaftaran', 
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                      onTap: _pickDate,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Wilayah (Region)
+                    const Text('Wilayah', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildDropdown<String>(
+                      value: _region,
+                      hint: 'Pilih Wilayah',
+                      items: _regionOptions,
+                      onChanged: (val) => setState(() => _region = val),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Tempat Uji Emisi (Emission Test Location)
+                    const Text('Tempat Uji Emisi', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    _buildDropdown<String>(
+                      value: _place,
+                      hint: 'Pilih Tempat',
+                      items: const ['Tempat A', 'Tempat B', 'Tempat C'],
+                      onChanged: (val) => setState(() => _place = val),
+                    ),
+
+                    const SizedBox(height: 32),
+                    Center(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0D65AA),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'Submit Pendaftaran', 
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
-        const SizedBox(width: 8),
-        const Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Pemesanan', 
-                style: TextStyle(
-                  fontSize: 20, 
-                  fontWeight: FontWeight.bold, 
-                  color: Colors.black
-                )
-              ),
-              Text(
-                'Uji Emisi', 
-                style: TextStyle(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.w600, 
-                  color: Colors.black
-                )
-              ),
-            ],
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
           ),
-        ),
-      ],
+          const Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Pemesanan',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Uji Emisi',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 48.0), // Spacer to balance the back button
+        ],
+      ),
     );
   }
 
@@ -251,15 +292,8 @@ class _BookingPageState extends State<BookingPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: TextField(
         controller: controller,
@@ -286,15 +320,8 @@ class _BookingPageState extends State<BookingPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: DropdownButtonHideUnderline(

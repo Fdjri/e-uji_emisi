@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'contact_page.dart';
+import 'homepage.dart'; // Import for popping back to home
+
+// Note: The CustomBottomNavBarWithLogic and NavBarClipper classes are included at the end of this file.
 
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
@@ -12,6 +15,21 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   int _selectedIndex = 0; // Info is selected
 
+  // --- NEW: Navigation logic for the custom navbar ---
+  void _onItemTapped(int index) {
+    if (index == 1) { // Home tab
+      // Pop back to the previous screen (which should be HomePage)
+      Navigator.pop(context);
+    } else if (index == 2) { // Contact tab
+      // Replace the current page with ContactPage to avoid stacking
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ContactPage()),
+      );
+    }
+    // If index is 0 (the current page), do nothing.
+  }
+
   Future<void> _downloadRegulation() async {
     final Uri url = Uri.parse('https://ujiemisi.jakarta.go.id/__assets/dokumen/cf818990ddfbd2b2d86ef41a97393a6e.pdf');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -22,8 +40,9 @@ class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F4FD), // Light blue background
+      backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // App Header
@@ -82,28 +101,56 @@ class _InfoPageState extends State<InfoPage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => _onItemTapped(0),
+              color: _selectedIndex == 0 ? const Color(0xFF0D65AA) : Colors.grey,
+            ),
+            const SizedBox(width: 40), // Spacer for the FAB
+            IconButton(
+              icon: const Icon(Icons.contact_phone_outlined),
+              onPressed: () => _onItemTapped(2),
+              color: _selectedIndex == 2 ? const Color(0xFF0D65AA) : Colors.grey,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _onItemTapped(1),
+        backgroundColor: const Color(0xFF4DB6AC),
+        child: const Icon(Icons.home, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   Widget _buildAppHeader() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Row(
         children: [
+          // Back button
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
+          // Centered title
           const Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Alur & Peraturan',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -112,12 +159,13 @@ class _InfoPageState extends State<InfoPage> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
+          // Spacer to balance the back button and center the title
+          const SizedBox(width: 48.0), // IconButton's default width is 48
         ],
       ),
     );
@@ -137,8 +185,9 @@ class _InfoPageState extends State<InfoPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
@@ -171,7 +220,7 @@ class _InfoPageState extends State<InfoPage> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
+              color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Icon(
@@ -207,8 +256,9 @@ class _InfoPageState extends State<InfoPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
@@ -223,7 +273,7 @@ class _InfoPageState extends State<InfoPage> {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: const Icon(
@@ -271,57 +321,6 @@ class _InfoPageState extends State<InfoPage> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          
-          // Handle navigation based on selected index
-          if (index == 1) { // Home tab
-            Navigator.pop(context);
-          } else if (index == 2) { // Contact tab
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ContactPage()),
-            );
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF0D65AA),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Info',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Contact',
           ),
         ],
       ),

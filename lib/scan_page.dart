@@ -20,76 +20,66 @@ class _ScanPageState extends State<ScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE8F4FD),
-              Color(0xFFD1E9FB),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 40),
-                      _buildBookingCard(),
-                      const SizedBox(height: 40),
-                      _buildQRCode(),
-                      const SizedBox(height: 40),
-                      _buildInstructions(),
-                    ],
-                  ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    _buildBookingCard(),
+                    const SizedBox(height: 40),
+                    _buildQRCode(),
+                    const SizedBox(height: 40),
+                    _buildInstructions(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Row(
         children: [
           IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
           ),
-          const SizedBox(width: 8),
           const Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Scan Booking', 
+                  'Scan Booking',
                   style: TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.bold, 
-                    color: Colors.black
-                  )
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
-                  'Uji Emisi', 
+                  'Uji Emisi',
                   style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.w600, 
-                    color: Colors.black
-                  )
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 48.0), // Spacer to balance the back button
         ],
       ),
     );
@@ -104,8 +94,9 @@ class _ScanPageState extends State<ScanPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
@@ -163,8 +154,9 @@ class _ScanPageState extends State<ScanPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
@@ -210,9 +202,10 @@ class _ScanPageState extends State<ScanPage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 4),
           ),
         ],
       ),

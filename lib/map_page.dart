@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmissionTestLocation {
@@ -32,20 +31,17 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  late final WebViewController _controller;
   String _filter = 'car';
   EmissionTestLocation? _selectedLocation;
   final TextEditingController _searchController = TextEditingController();
-  bool _showMap = false;
 
-  // Real Jakarta emission test locations for cars
   final List<EmissionTestLocation> _carLocations = [
     EmissionTestLocation(
       id: 'KMT.22.0001',
       name: 'PRASARANA DAN SARANA',
       address: 'Jalan Mandala V No. 67 Cililitan Jakarta Timur',
       phone: '0218092744',
-      description: 'umum',
+      description: 'Mendukung pengujian untuk umum',
       latitude: -6.2088,
       longitude: 106.8456,
       distance: 0.042,
@@ -60,89 +56,25 @@ class _MapPageState extends State<MapPage> {
       longitude: 106.6644,
       distance: 0.754,
     ),
-    EmissionTestLocation(
-      id: 'KMT.22.0003',
-      name: 'PT Rizqi Putra Pratama',
-      address: 'Jl. Raya Bogor, RW.4, Kramat Jati, Kec. Kramat jati, Kota Jakarta Timur',
-      phone: '085320001101',
-      description: 'Menerima pengujian kendaraan berbahan bakar bensin semua merk',
-      latitude: -6.2349,
-      longitude: 106.9896,
-      distance: 1.2,
-    ),
-    EmissionTestLocation(
-      id: 'KMT.22.0004',
-      name: 'Bengkel Uji Emisi Jakarta Pusat',
-      address: 'Jl. Sudirman No. 123, Jakarta Pusat',
-      phone: '021-5550123',
-      description: 'Uji Emisi Roda 4',
-      latitude: -6.4025,
-      longitude: 106.7942,
-      distance: 2.1,
-    ),
-    EmissionTestLocation(
-      id: 'KMT.22.0005',
-      name: 'Pusat Uji Emisi Tangerang',
-      address: 'Jl. Raya Serpong KM 7, Tangerang Selatan',
-      phone: '021-5550456',
-      description: 'Uji Emisi Roda 4',
-      latitude: -6.1380,
-      longitude: 106.8223,
-      distance: 3.5,
-    ),
   ];
 
-  // Real Jakarta emission test locations for motorcycles
   final List<EmissionTestLocation> _bikeLocations = [
     EmissionTestLocation(
       id: 'KMT.22.0006',
       name: 'Bengkel Motor Uji Emisi Jakarta Barat',
       address: 'Jl. Hayam Wuruk No. 12, Jakarta Barat',
       phone: '021-5550987',
-      description: 'Uji Emisi Roda 2',
+      description: 'Mendukung pengujian untuk Roda 2',
       latitude: -6.1751,
       longitude: 106.8650,
       distance: 0.8,
     ),
-    EmissionTestLocation(
-      id: 'KMT.22.0007',
-      name: 'Pusat Uji Motor Jakarta Selatan',
-      address: 'Jl. Gatot Subroto No. 34, Jakarta Selatan',
-      phone: '021-5550432',
-      description: 'Uji Emisi Roda 2',
-      latitude: -6.2088,
-      longitude: 106.8456,
-      distance: 1.1,
-    ),
   ];
-
-  // Embed queries for car and bike searches in Jakarta
-  static const String _carQuery =
-      'https://www.google.com/maps?q=uji+emisi+mobil+jakarta&output=embed&z=12&center=-6.2088,106.8456';
-  static const String _bikeQuery =
-      'https://www.google.com/maps?q=uji+emisi+motor+jakarta&output=embed&z=12&center=-6.2088,106.8456';
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString(_buildEmbedHtml(_carQuery));
-  }
 
   void _setFilter(String filter) {
     setState(() {
       _filter = filter;
       _selectedLocation = null;
-    });
-    final String src = filter == 'bike' ? _bikeQuery : _carQuery;
-    _controller.loadHtmlString(_buildEmbedHtml(src));
-  }
-
-  void _toggleView() {
-    setState(() {
-      _showMap = !_showMap;
     });
   }
 
@@ -187,28 +119,33 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE8F4FD),
-              Color(0xFFD1E9FB),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildSearchBar(),
-              Expanded(
-                child: _showMap ? _buildMapView() : _buildListView(),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildSearchBar(),
+            _buildFilterControls(),
+            Expanded(
+              child: Stack(
+                children: [
+                  // Placeholder for the map
+                  Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Text(
+                        'Peta akan ditampilkan di sini',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  _buildLocationMarkers(),
+                  if (_selectedLocation != null) _buildDetailOverlay(),
+                ],
               ),
-              _buildBottomControls(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -216,42 +153,50 @@ class _MapPageState extends State<MapPage> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       child: Row(
         children: [
           IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
           ),
-          const SizedBox(width: 8),
           const Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'DAFTAR TEMPAT UJI EMISI RODA 4',
+                  'Temukan Lokasi',
                   style: TextStyle(
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0D65AA),
+                  ),
+                ),
+                Text(
+                  'Uji Emisi',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 48.0),
         ],
       ),
     );
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: TextField(
         controller: _searchController,
         onChanged: (value) => setState(() {}),
         decoration: InputDecoration(
-          hintText: 'Masukkan Kata Kunci Pen...',
+          hintText: 'Cari lokasi...',
           prefixIcon: const Icon(Icons.search, color: Colors.grey),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
@@ -263,77 +208,171 @@ class _MapPageState extends State<MapPage> {
                 )
               : null,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.grey[200],
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );
   }
 
-  Widget _buildListView() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _filteredLocations.length,
-      itemBuilder: (context, index) {
-        final location = _filteredLocations[index];
-        return _buildLocationCard(location);
-      },
+  Widget _buildFilterControls() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildFilterButton('car', 'Mobil'),
+          const SizedBox(width: 16),
+          _buildFilterButton('bike', 'Motor'),
+        ],
+      ),
     );
   }
 
-  Widget _buildLocationCard(EmissionTestLocation location) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+  Widget _buildFilterButton(String filter, String label) {
+    final bool isSelected = _filter == filter;
+    return GestureDetector(
+      onTap: () => _setFilter(filter),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF0D65AA) : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isSelected ? Colors.transparent : Colors.grey,
           ),
-        ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow(Icons.home, 'Tempat Ujiemisi', location.name),
-            const SizedBox(height: 8),
-            _buildInfoRow(Icons.location_on, 'Alamat Tempat Ujiemisi', location.address),
-            const SizedBox(height: 8),
-            _buildInfoRow(Icons.phone, 'Telp Tempat Ujiemisi', location.phone),
-            const SizedBox(height: 8),
-            _buildInfoRow(Icons.check_circle, 'Keterangan', location.description),
-            const SizedBox(height: 8),
-            _buildInfoRow(Icons.location_searching, 'Jarak Dari Lokasi Anda', '${location.distance}Km'),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.phone,
-                    color: Colors.green,
-                    onTap: () => _makePhoneCall(location.phone),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.location_on,
-                    color: Colors.orange,
-                    onTap: () => _openMapsNavigation(location),
-                  ),
-                ),
-              ],
+    );
+  }
+
+  Widget _buildLocationMarkers() {
+    final locations = _filteredLocations;
+    
+    return Stack(
+      children: locations.asMap().entries.map((entry) {
+        final index = entry.key;
+        final location = entry.value;
+        
+        // Simple positioning logic for demonstration
+        double left = 50 + (index * 100.0);
+        double top = 100 + (index * 50.0);
+
+        return Positioned(
+          left: left,
+          top: top,
+          child: GestureDetector(
+            onTap: () => _showLocationDetail(location),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: _filter == 'car' ? Colors.blue : Colors.orange,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: Icon(
+                _filter == 'car' ? Icons.directions_car : Icons.two_wheeler,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
-          ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildDetailOverlay() {
+    if (_selectedLocation == null) return const SizedBox.shrink();
+
+    return Positioned(
+      bottom: 24,
+      left: 24,
+      right: 24,
+      child: Material(
+        elevation: 8,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedLocation!.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: _hideLocationDetail,
+                        icon: const Icon(Icons.close),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    _buildInfoRow(Icons.location_on, 'Alamat', _selectedLocation!.address),
+                    const SizedBox(height: 12),
+                    _buildInfoRow(Icons.phone, 'Telepon', _selectedLocation!.phone),
+                    const SizedBox(height: 12),
+                    _buildInfoRow(Icons.info_outline, 'Keterangan', _selectedLocation!.description),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openMapsNavigation(_selectedLocation!),
+                        icon: const Icon(Icons.directions, color: Colors.white),
+                        label: const Text('Arahkan'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D65AA),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -343,7 +382,7 @@ class _MapPageState extends State<MapPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: const Color(0xFF0D65AA)),
+        Icon(icon, size: 16, color: Colors.grey),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -361,7 +400,6 @@ class _MapPageState extends State<MapPage> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
                 ),
               ),
             ],
@@ -369,244 +407,5 @@ class _MapPageState extends State<MapPage> {
         ),
       ],
     );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Icon(icon, color: Colors.white, size: 20),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapView() {
-    return Stack(
-      children: [
-        WebViewWidget(controller: _controller),
-        _buildLocationMarkers(),
-        if (_selectedLocation != null) _buildDetailOverlay(),
-      ],
-    );
-  }
-
-  Widget _buildLocationMarkers() {
-    final locations = _filter == 'car' ? _carLocations : _bikeLocations;
-    
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: Stack(
-          children: locations.asMap().entries.map((entry) {
-            final index = entry.key;
-            final location = entry.value;
-            
-            // Calculate positions for markers
-            double left = 100 + (index * 60.0);
-            double top = 200 + (index * 40.0);
-
-            return Positioned(
-              left: left,
-              top: top,
-              child: GestureDetector(
-                onTap: () => _showLocationDetail(location),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: _filter == 'car' ? Colors.blue : Colors.orange,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    _filter == 'car' ? Icons.directions_car : Icons.two_wheeler,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailOverlay() {
-    if (_selectedLocation == null) return const SizedBox.shrink();
-
-    return Positioned(
-      left: 16,
-      right: 16,
-      top: 100,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Text(
-                    _selectedLocation!.id,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: _hideLocationDetail,
-                    icon: const Icon(Icons.close, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _buildInfoRow(Icons.home, 'Tempat Ujiemisi', _selectedLocation!.name),
-                  const SizedBox(height: 12),
-                  _buildInfoRow(Icons.location_on, 'Alamat Tempat Ujiemisi', _selectedLocation!.address),
-                  const SizedBox(height: 12),
-                  _buildInfoRow(Icons.phone, 'Telp', _selectedLocation!.phone),
-                  const SizedBox(height: 12),
-                  _buildInfoRow(Icons.check_circle, 'Keterangan', _selectedLocation!.description),
-                ],
-              ),
-            ),
-            // Action buttons
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.phone,
-                      color: Colors.green,
-                      onTap: () => _makePhoneCall(_selectedLocation!.phone),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.location_on,
-                      color: Colors.orange,
-                      onTap: () => _openMapsNavigation(_selectedLocation!),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomControls() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: _toggleView,
-              icon: Icon(_showMap ? Icons.list : Icons.map, color: Colors.white),
-              label: Text(
-                _showMap ? 'DAFTAR TEMPAT UJI EMISI' : 'PETA TEMPAT UJI EMISI',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0D65AA),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          _buildFilterButton('bike', Icons.two_wheeler, Colors.orange),
-          const SizedBox(width: 8),
-          _buildFilterButton('car', Icons.directions_car, Colors.blue),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterButton(String filter, IconData icon, Color color) {
-    final isSelected = _filter == filter;
-    return GestureDetector(
-      onTap: () => _setFilter(filter),
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: isSelected ? color : Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: color, width: 2),
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? Colors.white : color,
-          size: 24,
-        ),
-      ),
-    );
-  }
-
-  String _buildEmbedHtml(String src) {
-    return '''
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      html, body { height: 100%; margin: 0; padding: 0; background: transparent; }
-      .map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
-      iframe { border: 0; width: 100%; height: 100%; }
-    </style>
-  </head>
-  <body>
-    <div class="map">
-      <iframe src="$src" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </body>
-</html>
-''';
   }
 }
