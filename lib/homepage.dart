@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _platePart3Controller = TextEditingController();
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  Timer? _timer;
 
   final List<NewsArticle> _newsArticles = [
     NewsArticle(
@@ -76,6 +78,21 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      if (_currentPage < 2) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+      if (_pageController.hasClients) {
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeIn,
+        );
+      }
+    });
   }
 
   @override
@@ -84,6 +101,7 @@ class _HomePageState extends State<HomePage> {
     _platePart2Controller.dispose();
     _platePart3Controller.dispose();
     _pageController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -579,14 +597,13 @@ class _HomePageState extends State<HomePage> {
           children: [
             const TextSpan(text: 'Telah mencapai akhir halaman. Kunjungi juga '),
             TextSpan(
-              text: 'website',
+              text: 'website kami!',
               style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   _launchURL('https://ujiemisi.jakarta.go.id/');
                 },
             ),
-            const TextSpan(text: ' kami!'),
           ],
         ),
       ),
